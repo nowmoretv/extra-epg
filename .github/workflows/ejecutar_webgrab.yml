@@ -18,31 +18,43 @@ jobs:
         cp WebGrab++.config.xml config/WebGrab++.config.xml
         cp elmundo.es.ini config/siteini.user/elmundo.es.ini
 
-    - name: Ejecutar WebGrab+Plus mediante Docker oficial
+    - name: Ejecutar WebGrab+Plus mediante Docker Oficial
       run: |
-        docker run --rm \
+        # Arrancamos el contenedor de fondo (-d) mapeando la carpeta config
+        docker run -d \
+          --name webgrab_container \
           -v ${{ github.workspace }}/config:/config \
-          lscr.io/linuxserver/webgrabplus:latest \
-          /app/dotnet/dotnet /app/wg++/bin.net/WebGrab+Plus.dll /config
+          lscr.io/linuxserver/webgrabplus:latest
 
-    - name: Mover archivo EPG generado a la raíz
+        # El contenedor ejecuta la actualización al iniciar. 
+        # Esperamos 30 segundos en el servidor de GitHub para darle tiempo a descargar los canales.
+        echo "Esperando a que WebGrab+Plus descargue los canales de televisión..."
+        sleep 30
+
+        # Mostramos el registro del contenedor en la consola de GitHub para verificar que trabajó bien
+        docker logs webgrab_container
+
+    - name: Extraer y renombrar el archivo EPG generado
       run: |
-        # Buscamos el archivo guiatv.xml dentro de la carpeta config y sus subcarpetas y lo traemos a la raíz
-        find config/ -name "guiatv.xml" -exec mv {} . \;
-        
-        # Forzamos una comprobación visual en la consola para confirmar que el archivo está aquí
-        ls -la guiatv.xml || echo "ERROR: El archivo guiatv.xml no se encuentra en la raíz"
+        # Verificamos si el archivo oficial guide.xml fue creado en la carpeta config
+        if [ -f config/guide.xml ]; then
+          mv config/guide.xml ./guiatv.xml
+          echo "¡Archivo guide.xml encontrado y renombrado exitosamente a guiatv.xml!"
+        else
+          echo "ERROR: El contenedor no generó el archivo en config/guide.xml"
+          ls -la config/
+          exit 1
+        fi
 
     - name: Guardar la guía generada en GitHub
       run: |
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
         
-        # Verificamos si el archivo existe antes de intentar añadirlo a Git para evitar el error 128
         if [ -f guiatv.xml ]; then
           git add guiatv.xml
           git diff --quiet && git diff --staged --quiet || (git commit -m "EPG actualizada con WebGrab+ Docker" && git push)
         else
-          echo "No se encontró el archivo guiatv.xml para subir."
+          echo "No se encontró guiatv.xml para subir."
           exit 1
         fi
