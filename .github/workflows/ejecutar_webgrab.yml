@@ -18,30 +18,23 @@ jobs:
         cp WebGrab++.config.xml config/WebGrab++.config.xml
         cp elmundo.es.ini config/siteini.user/elmundo.es.ini
 
-    - name: Ejecutar WebGrab+Plus mediante Docker Oficial
+    - name: Ejecutar WebGrab+Plus mediante Docker Oficial (Forzado)
       run: |
-        # Arrancamos el contenedor de fondo (-d) mapeando la carpeta config
-        docker run -d \
-          --name webgrab_container \
+        # Corremos el contenedor pero forzamos la ejecución inmediata de su script interno de actualización
+        docker run --rm \
           -v ${{ github.workspace }}/config:/config \
-          lscr.io/linuxserver/webgrabplus:latest
-
-        # El contenedor ejecuta la actualización al iniciar. 
-        # Esperamos 30 segundos en el servidor de GitHub para darle tiempo a descargar los canales.
-        echo "Esperando a que WebGrab+Plus descargue los canales de televisión..."
-        sleep 30
-
-        # Mostramos el registro del contenedor en la consola de GitHub para verificar que trabajó bien
-        docker logs webgrab_container
+          lscr.io/linuxserver/webgrabplus:latest \
+          /bin/sh /app/wg++/update.sh
 
     - name: Extraer y renombrar el archivo EPG generado
       run: |
-        # Verificamos si el archivo oficial guide.xml fue creado en la carpeta config
+        # Comprobamos minuciosamente si el archivo se creó en config/
         if [ -f config/guide.xml ]; then
           mv config/guide.xml ./guiatv.xml
           echo "¡Archivo guide.xml encontrado y renombrado exitosamente a guiatv.xml!"
         else
           echo "ERROR: El contenedor no generó el archivo en config/guide.xml"
+          echo "Listando contenido de la carpeta config para depuración:"
           ls -la config/
           exit 1
         fi
