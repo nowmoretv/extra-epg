@@ -1,0 +1,35 @@
+name: Autogenerador WebGrabPlus
+
+on:
+  schedule:
+    - cron: '0 5 * * *' # Se ejecutará solo cada día a las 05:00 AM UTC
+  workflow_dispatch: # Permite que lo arranques tú con un botón cuando quieras
+
+jobs:
+  run-wg:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Descargar archivos del repositorio
+      uses: actions/checkout@v4
+
+    - name: Instalar WebGrab+Plus en el sistema
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mono-runtime mono-utils
+        wget http://webgrabplus.com
+        tar -zxvf WebGrabPlus_V3.3_install.tar.gz
+        cd WebGrabPlus.install && chmod +x install.sh && ./install.sh
+        # Mover los ejecutables a la carpeta raíz para facilitar el uso
+        cp -r ~/.WebGrab+Plus/* . || true
+
+    - name: Ejecutar WebGrab+Plus
+      run: |
+        # Ejecutamos el programa usando el archivo de configuración que creamos en el Paso 2
+        mono WebGrab+Plus.exe .
+
+    - name: Guardar la guía generada en GitHub
+      run: |
+        git config --local user.email "actions@github.com"
+        git config --local user.name "GitHub Actions"
+        git add guiatv.xml
+        git diff --quiet && git diff --staged --quiet || (git commit -m "EPG actualizada con WebGrab+" && git push)
