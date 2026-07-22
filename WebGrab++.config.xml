@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
   <!-- Especificamos la ruta exacta dentro del contenedor Docker -->
-  <filename>/config/guiatv.xml</filename>
+  <filename>/config/guide.xml</filename>
   <mode></mode>
   <user-agent>Mozilla/5.0 (Windows NT 10.0; Win64; x64)</user-agent>
   <logging>on</logging>
