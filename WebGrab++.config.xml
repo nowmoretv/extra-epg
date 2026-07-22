@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+  <filename>guia_favoritos.xml</filename>
+  <mode></mode>
+  <postprocess grab="yes" run="no" />
+  <logging>on</logging>
+  <retry time-out="5">4</retry>
+  <timespan>2</timespan>
+  <update>f</update>
+
+  <!-- LISTA DE TUS CANALES FAVORITOS -->
+  <!-- Debes usar archivos .ini correspondientes a la web de origen -->
+  <channel update="i" site="elmundo.es" site_id="LA1" xmltv_id="La 1">La 1</channel>
+  <channel update="i" site="elmundo.es" site_id="LA2" xmltv_id="La 2">La 2</channel>
+  <channel update="i" site="elmundo.es" site_id="ANT3" xmltv_id="Antena 3">Antena 3</channel>
+</settings>
