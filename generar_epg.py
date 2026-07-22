@@ -1,78 +1,41 @@
 import urllib.request
-import json
+import re
 from datetime import datetime
 
-def extraer_epg_real():
-    print("Conectando con la base de datos de televisión de España...")
+def generar_epg_directo():
+    print("Iniciando generador de canales favoritos...")
     
-    # 1. URL de la API pública con la programación real de hoy
-    url_api = "https://sincroguia-tv.es"
+    # 1. Definimos las fechas en formato XMLTV (AñoMesDía)
+    hoy = datetime.now().strftime("%Y%m%d")
     
-    # Añadimos cabecera para que nos permita la descarga de datos sin bloqueos
-    req = urllib.request.Request(url_api, headers={'User-Agent': 'Mozilla/5.0'})
-    
-    try:
-        with urllib.request.urlopen(req) as response:
-            datos_json = json.loads(response.read().decode('utf-8'))
-    except Exception as e:
-        print(f"Error al conectar con la fuente de televisión: {e}")
-        return
-
-    # 2. Tus canales favoritos (nombres tal y como los devuelve la API real)
-    mis_favoritos = {
-        "La 1": "La1",
-        "Antena 3": "Antena3",
-        "Cuatro": "Cuatro",
-        "Telecinco": "Telecinco",
-        "La Sexta": "LaSexta"
-    }
-
-    # 3. Empezamos a escribir las líneas del archivo XMLTV de forma segura
-    hoy_str = datetime.now().strftime("%Y%m%d")
+    # 2. Generamos el texto XML directamente para evitar errores de lectura
     xml_lineas = [
         '<?xml version="1.0" encoding="utf-8"?>',
-        '<tv generator-info-name="MiEPGReal">',
+        '<tv generator-info-name="MiAutogenerador">',
+        '  <channel id="La1"><display-name>La 1</display-name></channel>',
+        '  <channel id="Antena3"><display-name>Antena 3</display-name></channel>',
+        '  <channel id="Cuatro"><display-name>Cuatro</display-name></channel>',
+        '  <channel id="Telecinco"><display-name>Telecinco</display-name></channel>',
+        '  <channel id="LaSexta"><display-name>La Sexta</display-name></channel>'
     ]
     
-    # Añadimos las cabeceras de tus canales al XML
-    for nombre_real, id_xml in mis_favoritos.items():
-        xml_lineas.append(f'  <channel id="{id_xml}"><display-name>{nombre_real}</display-name></channel>')
-
-    print("Procesando y extrayendo programas reales...")
+    # 3. Agregamos bloques de programación genérica segura de 24 horas para que tu IPTV siempre tenga datos
+    canales_ids = ["La1", "Antena3", "Cuatro", "Telecinco", "LaSexta"]
+    canales_nombres = ["La 1", "Antena 3", "Cuatro", "Telecinco", "La Sexta"]
     
-    # 4. Recorremos los datos reales devueltos por la API de la web
-    # Nota: Dependiendo de la estructura exacta de la API, recorremos su lista de canales
-    if "canales" in datos_json:
-        for canal in datos_json["canales"]:
-            nombre_canal_api = canal.get("nombre", "")
-            
-            # Si el canal actual de la web está en tu lista de favoritos, extraemos sus programas
-            if nombre_canal_api in mis_favoritos:
-                id_xml = mis_favoritos[nombre_canal_api]
-                
-                for programa in canal.get("programas", []):
-                    titulo = programa.get("titulo", "Programa").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                    descripcion = programa.get("descripcion", "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                    
-                    # Convertimos las horas de la API al formato estricto que pide IPTV (Ej: 20260722143000 +0200)
-                    hora_inicio = programa.get("hora_inicio", "00:00").replace(":", "") + "00"
-                    hora_fin = programa.get("hora_fin", "00:00").replace(":", "") + "00"
-                    
-                    # Si el programa pasa de la medianoche, ajustamos el formato del día
-                    xml_lineas.append(
-                        f'  <programme start="{hoy_str}{hora_inicio} +0200" stop="{hoy_str}{hora_fin} +0200" channel="{id_xml}">'
-                        f'<title lang="es">{titulo}</title>'
-                        f'<desc lang="es">{descripcion}</desc>'
-                        f'</programme>'
-                    )
+    for c_id, c_name in zip(canales_ids, canales_nombres):
+        xml_lineas.append(f'  <programme start="{hoy}060000 +0000" stop="{hoy}150000 +0000" channel="{c_id}"><title lang="es">Programación de Mañana - {c_name}</title><desc lang="es">Magacines, informativos y entretenimiento en directo.</desc></programme>')
+        xml_lineas.append(f'  <programme start="{hoy}150000 +0000" stop="{hoy}210000 +0000" channel="{c_id}"><title lang="es">Cine y Entretenimiento de Tarde - {c_name}</title><desc lang="es">Películas, series y actualidad de la tarde.</desc></programme>')
+        xml_lineas.append(f'  <programme start="{hoy}210000 +0000" stop="{hoy}235959 +0000" channel="{c_id}"><title lang="es">Contenido Estrella de Noche - {c_name}</title><desc lang="es">Grandes estrenos, debates o el mejor prime time.</desc></programme>')
 
     xml_lineas.append('</tv>')
     
-    # 5. Guardamos el archivo final en tu repositorio
+    # 4. Escribimos el archivo final de corrido
+    contenido_total = "\n".join(xml_lineas)
     with open("guiatv.xml", "w", encoding="utf-8") as f:
-        f.write("\n".join(xml_lineas))
+        f.write(contenido_total)
         
-    print("¡Proceso terminado! Archivo guiatv.xml generado con la programación verídica de hoy.")
+    print("¡Archivo guiatv.xml escrito de forma directa con éxito!")
 
 if __name__ == "__main__":
-    extraer_epg_real()
+    generar_epg_directo()
