@@ -1,1 +1,23 @@
-
+<?xml version="1.0" encoding="utf-8"?>
+<tv generator-info-name="MiAutogenerador">
+  <channel id="La1"><display-name>La 1</display-name></channel>
+  <channel id="Antena3"><display-name>Antena 3</display-name></channel>
+  <channel id="Cuatro"><display-name>Cuatro</display-name></channel>
+  <channel id="Telecinco"><display-name>Telecinco</display-name></channel>
+  <channel id="LaSexta"><display-name>La Sexta</display-name></channel>
+  <programme start="20260722060000 +0000" stop="20260722150000 +0000" channel="La1"><title lang="es">Programación de Mañana - La 1</title><desc lang="es">Magacines, informativos y entretenimiento en directo.</desc></programme>
+  <programme start="20260722150000 +0000" stop="20260722210000 +0000" channel="La1"><title lang="es">Cine y Entretenimiento de Tarde - La 1</title><desc lang="es">Películas, series y actualidad de la tarde.</desc></programme>
+  <programme start="20260722210000 +0000" stop="20260722235959 +0000" channel="La1"><title lang="es">Contenido Estrella de Noche - La 1</title><desc lang="es">Grandes estrenos, debates o el mejor prime time.</desc></programme>
+  <programme start="20260722060000 +0000" stop="20260722150000 +0000" channel="Antena3"><title lang="es">Programación de Mañana - Antena 3</title><desc lang="es">Magacines, informativos y entretenimiento en directo.</desc></programme>
+  <programme start="20260722150000 +0000" stop="20260722210000 +0000" channel="Antena3"><title lang="es">Cine y Entretenimiento de Tarde - Antena 3</title><desc lang="es">Películas, series y actualidad de la tarde.</desc></programme>
+  <programme start="20260722210000 +0000" stop="20260722235959 +0000" channel="Antena3"><title lang="es">Contenido Estrella de Noche - Antena 3</title><desc lang="es">Grandes estrenos, debates o el mejor prime time.</desc></programme>
+  <programme start="20260722060000 +0000" stop="20260722150000 +0000" channel="Cuatro"><title lang="es">Programación de Mañana - Cuatro</title><desc lang="es">Magacines, informativos y entretenimiento en directo.</desc></programme>
+  <programme start="20260722150000 +0000" stop="20260722210000 +0000" channel="Cuatro"><title lang="es">Cine y Entretenimiento de Tarde - Cuatro</title><desc lang="es">Películas, series y actualidad de la tarde.</desc></programme>
+  <programme start="20260722210000 +0000" stop="20260722235959 +0000" channel="Cuatro"><title lang="es">Contenido Estrella de Noche - Cuatro</title><desc lang="es">Grandes estrenos, debates o el mejor prime time.</desc></programme>
+  <programme start="20260722060000 +0000" stop="20260722150000 +0000" channel="Telecinco"><title lang="es">Programación de Mañana - Telecinco</title><desc lang="es">Magacines, informativos y entretenimiento en directo.</desc></programme>
+  <programme start="20260722150000 +0000" stop="20260722210000 +0000" channel="Telecinco"><title lang="es">Cine y Entretenimiento de Tarde - Telecinco</title><desc lang="es">Películas, series y actualidad de la tarde.</desc></programme>
+  <programme start="20260722210000 +0000" stop="20260722235959 +0000" channel="Telecinco"><title lang="es">Contenido Estrella de Noche - Telecinco</title><desc lang="es">Grandes estrenos, debates o el mejor prime time.</desc></programme>
+  <programme start="20260722060000 +0000" stop="20260722150000 +0000" channel="LaSexta"><title lang="es">Programación de Mañana - La Sexta</title><desc lang="es">Magacines, informativos y entretenimiento en directo.</desc></programme>
+  <programme start="20260722150000 +0000" stop="20260722210000 +0000" channel="LaSexta"><title lang="es">Cine y Entretenimiento de Tarde - La Sexta</title><desc lang="es">Películas, series y actualidad de la tarde.</desc></programme>
+  <programme start="20260722210000 +0000" stop="20260722235959 +0000" channel="LaSexta"><title lang="es">Contenido Estrella de Noche - La Sexta</title><desc lang="es">Grandes estrenos, debates o el mejor prime time.</desc></programme>
+</tv>
