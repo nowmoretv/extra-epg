@@ -1,4 +1,4 @@
-name: Autogenerador WebGrabPlus
+name: Autogenerador EPG Facil
 
 on:
   schedule:
@@ -6,48 +6,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-wg:
+  build:
     runs-on: ubuntu-latest
     steps:
-    - name: Descargar archivos del repositorio
+    - name: Descargar repositorio
       uses: actions/checkout@v4
 
-    - name: Preparar carpetas para WebGrab+Plus
-      run: |
-        mkdir -p config/siteini.user
-        cp WebGrab++.config.xml config/WebGrab++.config.xml
-        cp elmundo.es.ini config/siteini.user/elmundo.es.ini
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
 
-    - name: Ejecutar WebGrab+Plus mediante Docker Oficial (Forzado)
-      run: |
-        # Corremos el contenedor pero forzamos la ejecución inmediata de su script interno de actualización
-        docker run --rm \
-          -v ${{ github.workspace }}/config:/config \
-          lscr.io/linuxserver/webgrabplus:latest \
-          /bin/sh /app/wg++/update.sh
+    - name: Ejecutar Extractor
+      run: python generar_epg.py
 
-    - name: Extraer y renombrar el archivo EPG generado
-      run: |
-        # Comprobamos minuciosamente si el archivo se creó en config/
-        if [ -f config/guide.xml ]; then
-          mv config/guide.xml ./guiatv.xml
-          echo "¡Archivo guide.xml encontrado y renombrado exitosamente a guiatv.xml!"
-        else
-          echo "ERROR: El contenedor no generó el archivo en config/guide.xml"
-          echo "Listando contenido de la carpeta config para depuración:"
-          ls -la config/
-          exit 1
-        fi
-
-    - name: Guardar la guía generada en GitHub
+    - name: Guardar en GitHub
       run: |
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
-        
-        if [ -f guiatv.xml ]; then
-          git add guiatv.xml
-          git diff --quiet && git diff --staged --quiet || (git commit -m "EPG actualizada con WebGrab+ Docker" && git push)
-        else
-          echo "No se encontró guiatv.xml para subir."
-          exit 1
-        fi
+        git add guiatv.xml
+        git diff --quiet && git diff --staged --quiet || (git commit -m "EPG actualizada" && git push)
