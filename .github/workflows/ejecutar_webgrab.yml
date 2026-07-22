@@ -2,8 +2,8 @@ name: Autogenerador WebGrabPlus
 
 on:
   schedule:
-    - cron: '0 5 * * *' # Se ejecutará solo cada día a las 05:00 AM UTC
-  workflow_dispatch: # Permite que lo arranques tú con un botón cuando quieras
+    - cron: '0 5 * * *'
+  workflow_dispatch:
 
 jobs:
   run-wg:
@@ -15,16 +15,23 @@ jobs:
     - name: Instalar WebGrab+Plus en el sistema
       run: |
         sudo apt-get update
-        sudo apt-get install -y mono-runtime mono-utils
+        sudo apt-get install -y mono-runtime mono-utils wget
+        # Descargamos la versión oficial
         wget http://webgrabplus.com
         tar -zxvf WebGrabPlus_V3.3_install.tar.gz
         cd WebGrabPlus.install && chmod +x install.sh && ./install.sh
-        # Mover los ejecutables a la carpeta raíz para facilitar el uso
+        
+    - name: Preparar entorno de ejecución
+      run: |
+        # Copiamos el ejecutable del programa a nuestra carpeta actual de trabajo
         cp -r ~/.WebGrab+Plus/* . || true
+        # WebGrab+Plus moderno exige que las recetas .ini estén dentro de una carpeta llamada siteini.user
+        mkdir -p siteini.user
+        cp elmundo.es.ini siteini.user/
 
     - name: Ejecutar WebGrab+Plus
       run: |
-        # Ejecutamos el programa usando el archivo de configuración que creamos en el Paso 2
+        # Forzamos a Mono a ejecutar el programa pasándole la ruta exacta de la carpeta actual con el punto (.)
         mono WebGrab+Plus.exe .
 
     - name: Guardar la guía generada en GitHub
