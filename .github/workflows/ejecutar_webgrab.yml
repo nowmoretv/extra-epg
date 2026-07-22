@@ -15,24 +15,22 @@ jobs:
     - name: Configurar entorno .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0' # Versión requerida por WebGrab+Plus moderno
+        dotnet-version: '8.0'
 
-    - name: Instalar WebGrab+Plus (Versión Linux .NET)
+    - name: Instalar WebGrab+Plus de forma nativa
       run: |
-        # Descargamos el binario oficial de Linux desde un mirror estable de GitHub
-        wget https://github.com
-        tar -zxvf WebGrabPlus_5.6_install.tar.gz
+        # Instalamos WebGrabPlus directamente desde el registro oficial de paquetes de Microsoft NuGet
+        dotnet tool install --global WebGrabPlus.CLI --version 5.6.0 || dotnet tool install --global WebGrabPlus.CLI
         
-        # Mover los archivos necesarios a nuestra carpeta de trabajo
-        cp -r WebGrabPlus/* . || true
+        # Creamos la carpeta interna que WebGrab exige para las recetas de canales
         mkdir -p siteini.user
         cp elmundo.es.ini siteini.user/
 
     - name: Ejecutar WebGrab+Plus
       run: |
-        # Ejecutar el programa nativo pasándole la configuración local (.)
-        chmod +x WebGrab+Plus
-        ./WebGrab+Plus .
+        # Agregamos las herramientas globales al camino del sistema y ejecutamos apuntando a nuestra carpeta (.)
+        export PATH="$PATH:$HOME/.dotnet/tools"
+        webgrabplus .
 
     - name: Guardar la guía generada en GitHub
       run: |
