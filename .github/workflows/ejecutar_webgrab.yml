@@ -1,50 +1,28 @@
-name: Autogenerador EPG Definitivo
+name: Autogenerador EPG Facil
 
 on:
   schedule:
-    - cron: '0 5 * * *' # Se ejecuta de forma automática todos los días a las 05:00 UTC
-  workflow_dispatch: # Activa el botón para ejecutarlo de forma manual
+    - cron: '0 5 * * *'
+  workflow_dispatch:
 
 jobs:
-  filtrar-epg:
+  build:
     runs-on: ubuntu-latest
     steps:
-    - name: Descargar el repositorio
+    - name: Descargar repositorio
       uses: actions/checkout@v4
 
-    - name: Instalar Extractor XML Nativo
-      run: |
-        # Instalamos xmlstarlet, la herramienta oficial de Linux para procesar XML sin errores
-        sudo apt-get update
-        sudo apt-get install -y xmlstarlet wget
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
 
-    - name: Descargar y Filtrar Guía de TV Real
-      run: |
-        echo "Descargando base de datos de televisión de España..."
-        # Descarga directa del repositorio más grande y estable de IPTV (epgshare01)
-        wget -q https://githubusercontent.com -O spain.xml.gz
-        gunzip spain.xml.gz
+    - name: Ejecutar Extractor
+      run: python generar_epg.py
 
-        echo "Extrayendo canales favoritos..."
-        # Creamos el archivo final vacío con su cabecera obligatoria
-        echo '<?xml version="1.0" encoding="utf-8"?><tv>' > guiatv.xml
-
-        # Extraemos los canales exactos (La 1, Antena 3, Cuatro, Telecinco, La Sexta) utilizando xmlstarlet
-        # Este comando busca de golpe los canales y sus programas correspondientes de forma limpia
-        xmlstarlet sel -t -c "//channel[display-name='La 1' or display-name='Antena 3' or display-name='Cuatro' or display-name='Telecinco' or display-name='La Sexta']" spain.xml >> guiatv.xml || true
-        xmlstarlet sel -t -c "//programme[@channel='La 1' or @channel='Antena 3' or @channel='Cuatro' or @channel='Telecinco' or @channel='La Sexta']" spain.xml >> guiatv.xml || true
-
-        # Cerramos la etiqueta del archivo
-        echo '</tv>' >> guiatv.xml
-        echo "¡Filtrado completado!"
-
-    - name: Guardar en tu Repositorio de GitHub
+    - name: Guardar en GitHub
       run: |
         git config --local user.email "actions@github.com"
         git config --local user.name "GitHub Actions"
-        
-        # Subimos el archivo final limpio guiatv.xml directamente a tu GitHub
-        if [ -f guiatv.xml ]; then
-          git add guiatv.xml
-          git diff --quiet && git diff --staged --quiet || (git commit -m "EPG Real Actualizada sin errores" && git push)
-        fi
+        git add guiatv.xml
+        git diff --quiet && git diff --staged --quiet || (git commit -m "EPG actualizada" && git push)
