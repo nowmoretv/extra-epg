@@ -1,16 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <settings>
-  <filename>guia_favoritos.xml</filename>
+  <!-- Nombre del archivo final que se va a generar -->
+  <filename>guiatv.xml</filename>
   <mode></mode>
-  <postprocess grab="yes" run="no" />
+  <user-agent>Mozilla/5.0 (Windows NT 10.0; Win64; x64)</user-agent>
   <logging>on</logging>
   <retry time-out="5">4</retry>
-  <timespan>2</timespan>
+  <timespan>2</timespan> <!-- Cuántos días de programación descargar (2 días para pruebas rápidas) -->
   <update>f</update>
 
-  <!-- LISTA DE TUS CANALES FAVORITOS -->
-  <!-- Debes usar archivos .ini correspondientes a la web de origen -->
-  <channel update="i" site="elmundo.es" site_id="LA1" xmltv_id="La 1">La 1</channel>
-  <channel update="i" site="elmundo.es" site_id="LA2" xmltv_id="La 2">La 2</channel>
-  <channel update="i" site="elmundo.es" site_id="ANT3" xmltv_id="Antena 3">Antena 3</channel>
+  <!-- Lista de canales que queremos extraer. El archivo .ini le dice cómo leer la web -->
+  <channel update="i" site="elmundo.es" site_id="television/guiatv/canales/la-1.html" xmltv_id="La 1">La 1</channel>
+  <channel update="i" site="elmundo.es" site_id="television/guiatv/canales/antena-3.html" xmltv_id="Antena 3">Antena 3</channel>
 </settings>
